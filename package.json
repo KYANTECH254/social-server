@@ -5,12 +5,18 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start-server": "nodemon index.js",
+    "start-socket": "node socket.js",
+    "start-all": "concurrently \"npm run start-server\" \"npm run start-socket\"",
+    "stop-server": "pkill -f 'nodemon index.js'",
+    "stop-socket": "pkill -f 'node socket.js'",
+    "stop-all": "pkill -f 'nodemon' && pkill -f 'node socket.js'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.5.0",
     "cluster": "^0.7.7",
     "compression": "^1.8.0",
     "cors": "^2.8.5",
@@ -22,7 +28,11 @@
     "nodeenv": "^3.0.75",
     "nodemon": "^3.1.9",
     "os": "^0.1.2",
+    "prisma": "^6.5.0",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }

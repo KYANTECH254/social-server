@@ -1,11 +1,11 @@
-import express from 'express';
-import rateLimit from 'express-rate-limit';
-import slowDown from 'express-slow-down';
-import helmet from 'helmet';
-import cors from 'cors';
-import compression from 'compression';
-import cluster from 'cluster';
-import os from 'os';
+const express = require('express');
+const rateLimit = require('express-rate-limit');
+const slowDown = require('express-slow-down');
+const helmet = require('helmet');
+const cors = require('cors');
+const compression = require('compression');
+const cluster = require('cluster');
+const os = require('os');
 
 const app = express();
 const blockedIPs = new Set();
@@ -31,11 +31,14 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Slow Down to prevent bot abuse
+// Slow Down to prevent bot abuse (updated for express-slow-down v2)
 const speedLimiter = slowDown({
     windowMs: 60 * 1000, // 1 minute
     delayAfter: 50, // Allow 50 requests per minute
-    delayMs: 500 // Delay subsequent requests
+    delayMs: (used, req) => {
+        const delayAfter = req.slowDown.limit;
+        return (used - delayAfter) * 500;
+    }
 });
 app.use(speedLimiter);
 
@@ -53,7 +56,7 @@ app.get('/', (req, res) => {
 });
 
 // Enable Clustering for Multi-Core Usage
-if (cluster.isPrimary) {
+if (cluster.isMaster) {
     const numCPUs = os.cpus().length;
     console.log(`Master process running on PID ${process.pid}`);
 

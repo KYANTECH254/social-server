@@ -6,6 +6,7 @@ const cors = require('cors');
 const compression = require('compression');
 const cluster = require('cluster');
 const os = require('os');
+const path = require("path");
 
 const app = express();
 const blockedIPs = new Set();
@@ -14,8 +15,9 @@ const PORT = process.env.PORT || 3001;
 // Security Headers
 app.use(helmet());
 
-// Enable CORS for safe cross-origin requests
 app.use(cors());
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
 
 // Enable response compression
 app.use(compression());
@@ -50,9 +52,22 @@ app.use((req, res, next) => {
     next();
 });
 
-// Basic route
-app.get('/', (req, res) => {
-    res.send("Server is running");
+const userRoutes = require('./routes/userRoutes');
+
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, "public")));
+
+// Serve index.html for the root route
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// User API routes
+app.use("/api", userRoutes);
+
+// 404 Error Handling - Redirect to 404.html
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
 });
 
 // Enable Clustering for Multi-Core Usage

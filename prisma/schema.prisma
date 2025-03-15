@@ -8,7 +8,72 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id            String   @id @default(cuid()) 
+  googleId      String   @unique             
+  name          String
+  email         String   @unique
+  avatar        String?
+  verifiedEmail Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+  sessions      Session[]
+  verificationTokens VerificationToken[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model RefreshToken {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token       String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Session {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device      String?
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token       String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, token])
+}
+
+model PasswordResetToken {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token       String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, token])
+}
+
+model Account {
+  id            String   @id @default(cuid()) 
+  username      String   @unique             
+  email         String   @unique
+  dob           String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

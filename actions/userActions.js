@@ -85,6 +85,54 @@ const createAccount = async (accountData) => {
     }
 };
 
+const getAccountByEmail = async (email) => {
+    if (!email) return null;
+    const user = await prisma.account.findUnique({
+        where: {
+            email,
+        },
+    });
+    return user;
+};
+
+const storeRefreshToken = async (data) => {
+    if (!data) return null;
+    const storedtoken = await prisma.refreshToken.create({
+        data: {
+            userId: data.userId,
+            token: data.token,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 
+        },
+    });
+    return storedtoken;
+};
+
+const deleteRefreshToken = async (token) => {
+    if (!token) return null;
+    const deletetoken = await prisma.refreshToken.delete({
+        where: {
+            token,
+        },
+    });
+    return true;
+};
+
+const getRefreshToken = async (token) => {
+    if (!token) return null;
+    const storedtoken = await prisma.refreshToken.findUnique({
+        where: { token: token },
+        include: { user: true },
+    });
+    return storedtoken;
+};
+
+const storeSession = async (session) => {
+    if (!session) return null;
+    const storedSession = await prisma.session.create({
+        data: session,
+    });
+    return storedSession;
+}
 
 module.exports = {
     hashPassword,
@@ -93,5 +141,10 @@ module.exports = {
     createUser,
     saveUser,
     getUserName,
-    createAccount
+    createAccount,
+    storeRefreshToken,
+    deleteRefreshToken,
+    getRefreshToken,
+    storeSession,
+    getAccountByEmail
 };

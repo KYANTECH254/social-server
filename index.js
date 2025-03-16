@@ -9,6 +9,7 @@ const os = require('os');
 const path = require("path");
 
 const app = express();
+app.set('trust proxy', true);
 const blockedIPs = new Set();
 const PORT = process.env.SERVER_PORT || 3001;
 

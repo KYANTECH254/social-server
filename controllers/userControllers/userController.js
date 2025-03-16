@@ -166,7 +166,7 @@ async function UpdateUser(req, res) {
         if (!account) {
             return res.json({ loggedin: false, success: false, message: "An error occured!" });
         }
-        const existing_user = await getUserByEmail(userData.email);
+        const existing_user = await getUserByEmail(email);
         if (existing_user) {
             const { accessToken, refreshToken } = generateTokens(existing_user.email);
             const rtoken = {

@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.post("/auth/google", AuthenticateGoogleUser);
 router.post("/check/username", CheckUserNameExists);
-router.post("/auth/updateUser", UpdateUser);
+router.post("/auth/account", UpdateUser);
+router.post("/auth/logout", UpdateUser);
 
 module.exports = router;

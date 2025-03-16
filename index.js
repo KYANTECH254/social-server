@@ -10,7 +10,7 @@ const path = require("path");
 
 const app = express();
 const blockedIPs = new Set();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.SERVER_PORT || 3001;
 
 // Security Headers
 app.use(helmet());

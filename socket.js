@@ -5,7 +5,7 @@ const socketIo = require('socket.io');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.SOCKET_PORT || 3002;
 const numCPUs = os.cpus().length;
 
 if (cluster.isMaster) {

@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "axios": "^1.8.3",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "cluster": "^0.7.7",
@@ -29,10 +30,12 @@
     "express-slow-down": "^2.0.3",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "nodeenv": "^3.0.75",
     "nodemon": "^3.1.9",
     "os": "^0.1.2",
     "prisma": "^6.5.0",
+    "redis": "^4.7.0",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0"
   },

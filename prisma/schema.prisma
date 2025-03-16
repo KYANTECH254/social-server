@@ -70,10 +70,50 @@ model PasswordResetToken {
 }
 
 model Account {
-  id            String   @id @default(cuid()) 
-  username      String   @unique             
-  email         String   @unique
-  dob           String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id         String    @id @default(cuid())
+  username   String    @unique
+  email      String    @unique
+  dob        String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  posts      Post[]    @relation("PostAuthor")
+  replies    Reply[]   @relation("ReplyAuthor")
+  likedPosts Post[]    @relation("PostLikes") 
+}
+
+model Post {
+  id        String      @id @default(uuid())
+  content   String?
+  url       String?
+  email     String
+
+  authorId  String
+  author    Account     @relation("PostAuthor", fields: [authorId], references: [id])
+
+  likes     Account[]   @relation("PostLikes") 
+  replies   Reply[]
+
+  image     String?    
+  video     String?     
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+
+model Reply {
+  id        String   @id @default(uuid())
+  content   String
+  image     String?  // Optional image URL or file path
+  video     String?  // Optional video URL or file path
+
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+
+  authorId  String
+  author    Account  @relation("ReplyAuthor", fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

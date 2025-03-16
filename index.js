@@ -1,6 +1,6 @@
 const express = require('express');
-const rateLimit = require('express-rate-limit');
-const slowDown = require('express-slow-down');
+// const rateLimit = require('express-rate-limit');
+// const slowDown = require('express-slow-down');
 const helmet = require('helmet');
 const cors = require('cors');
 const compression = require('compression');
@@ -9,47 +9,56 @@ const os = require('os');
 const path = require("path");
 
 const app = express();
-app.set('trust proxy', 1);
-const blockedIPs = new Set();
+// app.set('trust proxy', true); // Trust all proxies (better for production cloud environments)
+// const blockedIPs = new Set(); // Disabled for now
 const PORT = process.env.SERVER_PORT || 3001;
 
 // Security Headers
 app.use(helmet());
 
+// Enable CORS
 app.use(cors());
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); 
+
+// Parse JSON and URL-encoded payloads
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Enable response compression
 app.use(compression());
 
-// Rate Limiting to prevent DDoS
-const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 100, // Allow 100 requests per IP
-    handler: (req, res) => {
-        blockedIPs.add(req.ip);
-        res.status(429).send("Too many requests, you are temporarily blocked.");
-    }
-});
-app.use(limiter);
+// ======= Rate Limiting Disabled =======
+// const limiter = rateLimit({
+//     windowMs: 1 * 60 * 1000, // 1 minute
+//     max: 100, // Allow 100 requests per IP
+//     handler: (req, res) => {
+//         blockedIPs.add(req.ip);
+//         res.status(429).send("Too many requests, you are temporarily blocked.");
+//     }
+// });
+// app.use(limiter);
 
-// Slow Down to prevent bot abuse (updated for express-slow-down v2)
-const speedLimiter = slowDown({
-    windowMs: 60 * 1000, // 1 minute
-    delayAfter: 50, // Allow 50 requests per minute
-    delayMs: (used, req) => {
-        const delayAfter = req.slowDown.limit;
-        return (used - delayAfter) * 500;
-    }
-});
-app.use(speedLimiter);
+// ======= Slow Down Disabled =======
+// const speedLimiter = slowDown({
+//     windowMs: 60 * 1000, // 1 minute
+//     delayAfter: 50, // Allow 50 requests per minute
+//     delayMs: (used, req) => {
+//         const delayAfter = req.slowDown.limit;
+//         return (used - delayAfter) * 500;
+//     }
+// });
+// app.use(speedLimiter);
 
-// Block abusive IPs
+// ======= IP Blocking Disabled =======
+// app.use((req, res, next) => {
+//     if (blockedIPs.has(req.ip)) {
+//         return res.status(403).send("You are blocked.");
+//     }
+//     next();
+// });
+
+// Log IP for debugging (optional, can be removed later)
 app.use((req, res, next) => {
-    if (blockedIPs.has(req.ip)) {
-        return res.status(403).send("You are blocked.");
-    }
+    console.log("Request IP:", req.ip);
     next();
 });
 

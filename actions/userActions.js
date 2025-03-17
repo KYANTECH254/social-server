@@ -134,6 +134,16 @@ const storeSession = async (session) => {
     return storedSession;
 }
 
+const deleteAccessToken = async (token) => {
+    if (!token) return null;
+    const deletetoken = await prisma.accessToken.delete({
+        where: {
+            token,
+        },
+    });
+    return true;
+};
+
 module.exports = {
     hashPassword,
     comparePassword,
@@ -146,5 +156,6 @@ module.exports = {
     deleteRefreshToken,
     getRefreshToken,
     storeSession,
-    getAccountByEmail
+    getAccountByEmail,
+    deleteAccessToken
 };

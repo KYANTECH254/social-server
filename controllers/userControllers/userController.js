@@ -18,7 +18,8 @@ const {
     getRefreshToken,
     deleteRefreshToken,
     storeSession,
-    getAccountByEmail
+    getAccountByEmail,
+    deleteAccessToken
 } = require("../../actions/userActions");
 
 function generateToken(length = 32) {
@@ -195,4 +196,22 @@ async function UpdateUser(req, res) {
     }
 }
 
-module.exports = { AuthenticateGoogleUser, CheckUserNameExists, UpdateUser };
+async function Logout(req, res) {
+    const { refreshToken, accessToken } = req.body;
+    try {
+        const deleteAccess = await deleteRefreshToken(refreshToken)
+        if (!deleteAccess) {
+            return res.json({ success: false, message: "An error occured, please try again!" });
+        }
+        const deleteRefresh = await deleteAccessToken(accessToken)
+        if (!deleteRefresh) {
+            return res.json({ success: false, message: "An error occured, please try again!" });
+        }
+        return res.json({ success: true, message: "Logout successful" });
+    } catch (error) {
+        console.error("Error logging out:", error);
+        return res.status(200).json({ success: false, message: "Internal server error" });
+    }
+}
+
+module.exports = { AuthenticateGoogleUser, CheckUserNameExists, UpdateUser, Logout };
